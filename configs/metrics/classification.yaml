@@ -1,0 +1,7 @@
+accuracy:
+  _target_: torchmetrics.classification.MulticlassAccuracy
+  num_classes: ${data.num_classes}
+f1:
+  _target_: torchmetrics.classification.MulticlassF1Score
+  num_classes: ${data.num_classes}
+  average: macro

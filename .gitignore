@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+.python-version
+
+# Virtual environment
+.venv/
+
+# Build / packaging
+*.egg-info/
+dist/
+build/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Type checking
+.mypy_cache/
+
+# Editors
+.vscode/
+.idea/
+
+# Hydra outputs
+outputs/
+
+# MLflow
+mlruns/
+mlflow.db
+
+# Lightning
+lightning_logs/
+checkpoints/
+
+# Data (downloaded at runtime)
+data/
+notebooks/data/
+
+# Logs
+logs/

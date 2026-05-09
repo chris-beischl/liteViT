@@ -1,0 +1,14 @@
+defaults: 
+  - train_config
+  - model: tiny
+  - data: mnist
+  - loss: cross_entropy
+  - optimizer: adam_w
+  - scheduler: cosine
+  - metrics: classification
+  - callbacks: no_checkpoint
+  - trainer: default 
+  - logger: mlflow
+  - _self_
+
+seed: 0

@@ -1,0 +1,13 @@
+defaults:
+  - patch_embed@patch_embed_cfg: conv
+  - attention@attention_cfg: vanilla  
+  - block@block_cfg: vanilla
+  - _self_
+
+_target_: litevit.models.vit.build_vit
+embed_dim: 64
+num_heads: 2
+depth: 4
+num_classes: 10
+dropout: 0.0
+drop_path_rate: 0.0

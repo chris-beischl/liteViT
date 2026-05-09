@@ -1,0 +1,5 @@
+_target_: lightning.pytorch.loggers.MLFlowLogger
+experiment_name: liteViT
+tracking_uri: ${hydra:runtime.cwd}/mlruns
+run_name: ${now:%Y-%m-%d_%H-%M-%S}
+artifact_location: ${hydra:runtime.cwd}/mlruns/artifacts

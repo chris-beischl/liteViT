@@ -1,0 +1,3 @@
+callbacks:
+  - _target_: lightning.pytorch.callbacks.LearningRateMonitor
+    logging_interval: epoch

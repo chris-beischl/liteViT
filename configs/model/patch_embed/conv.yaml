@@ -1,0 +1,5 @@
+_target_: litevit.models.patch_embed.ConvPatchEmbed
+img_size: ${data.img_size}
+patch_size: 4
+in_channels: ${data.num_channels}
+embed_dim: ${model.embed_dim}
