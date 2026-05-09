@@ -1,0 +1,33 @@
+_target_: litevit.data.cifar10.CIFAR10DataModule
+
+# following He et al. 2015 - Deep Residual Learning for Image Recognition for
+# minimal training transformations
+train_transform:
+  _target_: torchvision.transforms.Compose
+  transforms:
+    - _target_: torchvision.transforms.RandomCrop
+      size: [32, 32]
+      padding: 4
+    - _target_: torchvision.transforms.RandomHorizontalFlip
+    - _target_: torchvision.transforms.ToTensor
+    - _target_: torchvision.transforms.Normalize
+      mean: [0.4914, 0.4822, 0.4465]
+      std: [0.2470, 0.2435, 0.2616]
+
+eval_transform:
+  _target_: torchvision.transforms.Compose
+  transforms:
+    - _target_: torchvision.transforms.ToTensor
+    - _target_: torchvision.transforms.Normalize
+      mean: [0.4914, 0.4822, 0.4465]
+      std: [0.2470, 0.2435, 0.2616]
+
+split_perc: [0.85, 0.15, 0.0]
+num_workers: 8
+batch_size: 256
+pin_memory: False
+persistent_workers: True
+
+img_size: [32, 32]
+num_channels: 3
+num_classes: 10
