@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 import torch
 import torch.nn as nn
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset, random_split
 
 from lightning import LightningDataModule
 
@@ -60,6 +60,13 @@ class BaseDataModule(LightningDataModule, ABC):
     @abstractmethod
     def setup(self, stage=None):
         pass
+    
+    def _split_dataset(self, dataset: Dataset, split_ratio: tuple[float, ...]) -> tuple[Dataset, ...]:
+        return random_split(
+            dataset,
+            split_ratio,
+            generator=torch.Generator().manual_seed(self.seed),
+        )
     
     def _make_dataloader(self, dataset, shuffle: bool) -> DataLoader: 
         return DataLoader(
