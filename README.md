@@ -30,5 +30,5 @@ uv run python train.py callbacks=default
 Runs are tracked with MLflow. To inspect results:
 
 ```bash
-uv run mlflow ui --backend-store-uri mlruns/
+uv run python -m mlflow ui --backend-store-uri mlruns/
 ```
