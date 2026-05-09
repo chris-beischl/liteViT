@@ -62,7 +62,7 @@ class ClassificationModule(L.LightningModule):
         x, y = batch
         y_hat = self.model(x)
         loss = self.loss(y_hat, y)
-        self.log("val_loss", loss, on_step=False, on_epoch=True)
+        self.log("val_loss", loss, on_step=False, on_epoch=True, prog_bar=True)
         
         # update all validation metrics
         if self.val_metrics is not None:
@@ -87,7 +87,7 @@ class ClassificationModule(L.LightningModule):
     def on_validation_epoch_end(self):
         if self.val_metrics is not None:
             val_metric_results = self.val_metrics.compute()
-            self.log_dict(val_metric_results, on_step=False, on_epoch=True)
+            self.log_dict(val_metric_results, on_step=False, on_epoch=True, prog_bar=True)
             self.val_metrics.reset()
             
     def on_test_epoch_end(self):
