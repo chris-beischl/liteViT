@@ -1,0 +1,17 @@
+# @package _global_
+
+defaults:
+  - override /hydra/sweeper: tpe
+  - override /data: fashion_mnist
+  - override /model: lite_experimental
+
+hydra: 
+  sweeper: 
+    study_name: fashion_mnist_init
+    n_trials: 20
+    params: 
+      model.depth: choice(2, 4, 6, 8) 
+      model.drop_path_rate: choice(0.0, 0.1, 0.2)
+
+      optimizer.lr: tag(log, interval(5e-5, 1e-3))
+      optimizer.weight_decay: tag(log, interval(1e-3, 0.1))

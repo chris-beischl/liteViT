@@ -46,7 +46,9 @@ def main(cfg):
         cfg.trainer, callbacks=callbacks, logger=logger
     )
     trainer.fit(module, datamodule=data)
-
+    
+    # return validation accuracy for optuna to use for hparam selection
+    return trainer.callback_metrics["val_accuracy"].item()
 
 if __name__ == "__main__":
     main()

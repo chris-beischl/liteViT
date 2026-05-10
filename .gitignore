@@ -27,6 +27,7 @@ htmlcov/
 
 # Hydra outputs
 outputs/
+/multirun/
 
 # MLflow
 mlruns/
