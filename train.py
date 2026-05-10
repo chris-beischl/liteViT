@@ -2,6 +2,7 @@ import hydra
 
 import lightning as L
 from torchmetrics import MetricCollection
+from omegaconf import OmegaConf
 
 from litevit.conf import register_configs
 from litevit.training.module import ClassificationModule
@@ -37,7 +38,10 @@ def main(cfg):
     data = hydra.utils.instantiate(cfg.data)
     callbacks = [hydra.utils.instantiate(cb) for cb in cfg.callbacks.callbacks]
     logger = hydra.utils.instantiate(cfg.logger) if cfg.logger is not None else None
-
+    
+    if hasattr(logger, 'log_hyperparams'): 
+        logger.log_hyperparams(OmegaConf.to_container(cfg, resolve=True))
+    
     trainer: L.Trainer = hydra.utils.instantiate(
         cfg.trainer, callbacks=callbacks, logger=logger
     )
