@@ -4,7 +4,7 @@ defaults:
   - data: mnist
   - loss: cross_entropy
   - optimizer: adam_w
-  - scheduler: cosine
+  - scheduler: cosine_warmup
   - metrics: classification
   - callbacks: no_checkpoint
   - trainer: default 
