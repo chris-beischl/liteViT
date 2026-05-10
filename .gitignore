@@ -23,6 +23,7 @@ htmlcov/
 # Editors
 .vscode/
 .idea/
+.DS_STORE
 
 # Hydra outputs
 outputs/
