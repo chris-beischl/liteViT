@@ -1,6 +1,6 @@
 defaults: 
   - train_config
-  - model: tiny
+  - model: lite_experimental
   - data: mnist
   - loss: cross_entropy
   - optimizer: adam_w
