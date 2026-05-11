@@ -5,7 +5,8 @@ from torchmetrics import MetricCollection
 from omegaconf import OmegaConf
 
 from litevit.conf import register_configs
-from litevit.training.module import ClassificationModule
+from litevit.training import ClassificationModule
+from litevit.training.callbacks import CheckpointMetadataCallback
 
 register_configs()
 
@@ -36,8 +37,13 @@ def main(cfg):
     )
 
     data = hydra.utils.instantiate(cfg.data)
-    callbacks = [hydra.utils.instantiate(cb) for cb in cfg.callbacks.callbacks]
+    callbacks = [hydra.utils.instantiate(cb) for cb in cfg.callbacks]
     logger = hydra.utils.instantiate(cfg.logger) if cfg.logger is not None else None
+    run_id = logger.run_id if logger is not None else None
+
+    # add Metadata logger for cfg and run_id
+    checkpoint_metadata_callback = CheckpointMetadataCallback(cfg, run_id)
+    callbacks.append(checkpoint_metadata_callback)
     
     if hasattr(logger, 'log_hyperparams'): 
         logger.log_hyperparams(OmegaConf.to_container(cfg, resolve=True))

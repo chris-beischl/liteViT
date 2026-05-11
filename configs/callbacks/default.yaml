@@ -1,4 +1,6 @@
-callbacks: 
+# @package _global_
+
+callbacks:
   - _target_: lightning.pytorch.callbacks.LearningRateMonitor
     logging_interval: epoch
   - _target_: lightning.pytorch.callbacks.ModelCheckpoint
@@ -6,3 +8,6 @@ callbacks:
     mode: min
     save_top_k: 1
     dirpath: checkpoints/${now:%Y-%m-%d}/${now:%H-%M-%S}
+
+trainer: 
+  enable_checkpointing: True

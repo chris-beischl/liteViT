@@ -6,8 +6,8 @@ defaults:
   - optimizer: adam_w
   - scheduler: cosine_warmup
   - metrics: classification
-  - callbacks: no_checkpoint
   - trainer: default 
+  - callbacks: no_checkpoint
   - logger: mlflow
   - _self_
 
