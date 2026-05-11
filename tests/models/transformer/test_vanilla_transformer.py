@@ -2,8 +2,8 @@ import pytest
 
 import torch 
 
-from litevit.models.transformer.vanilla import VanillaTransformerBlock
-from litevit.models.attention.vanilla import VanillaAttention
+from litevit.models.block import VanillaTransformerBlock
+from litevit.models.attention import VanillaAttention
 
 @pytest.mark.parametrize("num_tokens,embed_dim,num_heads", [
     (16, 64, 8),

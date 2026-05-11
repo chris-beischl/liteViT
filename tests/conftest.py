@@ -4,7 +4,7 @@ import torch
 
 from litevit.models.vit import ViT
 from litevit.models.patch_embed import ConvPatchEmbed
-from litevit.models.transformer.vanilla import VanillaTransformerBlock
+from litevit.models.block import VanillaTransformerBlock
 from litevit.models.attention.vanilla import VanillaAttention
 
 

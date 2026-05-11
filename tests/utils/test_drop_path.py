@@ -2,7 +2,7 @@ import pytest
 
 import torch
 
-from litevit.utils.drop_path import DropPath, drop_path
+from litevit.utils import DropPath, drop_path
 
 def test_drop_path_no_drop(): 
     x = torch.randn(2, 3)
