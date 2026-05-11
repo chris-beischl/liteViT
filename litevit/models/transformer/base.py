@@ -5,6 +5,7 @@ from torch import nn
 
 from ..attention.base import BaseAttention
 from ...utils.drop_path import DropPath
+from ...utils.utils import resolve
 
 class BaseTransformerBlock(nn.Module, ABC):
     def __init__(
@@ -14,7 +15,7 @@ class BaseTransformerBlock(nn.Module, ABC):
         dropout: float = 0.0,
         drop_path: float = 0.0,
         activation: type[nn.Module] = nn.GELU,
-        norm: type[nn.Module] = nn.LayerNorm,
+        norm: type[nn.Module] | str = nn.LayerNorm,
     ):
         super().__init__()
 
@@ -22,7 +23,9 @@ class BaseTransformerBlock(nn.Module, ABC):
         self.mlp_ratio = mlp_ratio
         self.dropout = dropout
         self.drop_path = DropPath(drop_path)
-        self.norm = norm
+        
+        self.norm = resolve(norm) if isinstance(norm, str) else norm
+            
         self.activation = activation
 
         self.embed_dim = attention.embed_dim

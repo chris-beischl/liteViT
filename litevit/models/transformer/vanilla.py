@@ -13,7 +13,7 @@ class VanillaTransformerBlock(BaseTransformerBlock):
         dropout: float = 0.0,
         drop_path: float = 0.0,
         activation: type[nn.Module] = nn.GELU,
-        norm: type[nn.Module] = nn.LayerNorm,
+        norm: type[nn.Module] | str = nn.LayerNorm,
     ):
         super().__init__(attention, mlp_ratio, dropout, drop_path, activation, norm)
 

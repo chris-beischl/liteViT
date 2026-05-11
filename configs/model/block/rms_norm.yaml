@@ -1,0 +1,3 @@
+_target_: litevit.models.transformer.vanilla.VanillaTransformerBlock
+mlp_ratio: 4.0
+norm: torch.nn.RMSNorm
