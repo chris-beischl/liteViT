@@ -1,4 +1,4 @@
-_target_: litevit.data.fashion_mnist.FashionMNISTDataModule
+_target_: litevit.data.FashionMNISTDataModule
 
 train_transform:
   _target_: torchvision.transforms.Compose

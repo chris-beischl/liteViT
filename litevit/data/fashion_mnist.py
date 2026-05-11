@@ -1,7 +1,7 @@
 from torchvision.datasets import FashionMNIST
 
 from .mnist import MNISTDataModule
-from litevit.data.transform_dataset import TransformDataset
+from .transform_dataset import TransformDataset
 
 class FashionMNISTDataModule(MNISTDataModule):
     def prepare_data(self):

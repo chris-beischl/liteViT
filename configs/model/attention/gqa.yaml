@@ -1,4 +1,4 @@
-_target_: litevit.models.attention.gqa.GroupedQueryAttention
+_target_: litevit.models.attention.GroupedQueryAttention
 embed_dim: ${model.embed_dim}
 num_heads: ${model.num_heads}
 num_kv_heads: 2

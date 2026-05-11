@@ -3,9 +3,8 @@ from abc import ABC, abstractmethod
 import torch
 from torch import nn
 
-from ..attention.base import BaseAttention
-from ...utils.drop_path import DropPath
-from ...utils.utils import resolve
+from ..attention import BaseAttention
+from ...utils import DropPath, resolve
 
 class BaseTransformerBlock(nn.Module, ABC):
     def __init__(

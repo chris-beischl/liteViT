@@ -1,4 +1,4 @@
-_target_: litevit.data.cifar10.CIFAR10DataModule
+_target_: litevit.data.CIFAR10DataModule
 
 # following He et al. 2015 - Deep Residual Learning for Image Recognition for
 # minimal training transformations

@@ -1,7 +1,7 @@
 from torchvision.datasets import KMNIST
 
 from .mnist import MNISTDataModule
-from litevit.data.transform_dataset import TransformDataset
+from .transform_dataset import TransformDataset
 
 class KMNISTDataModule(MNISTDataModule):
     def prepare_data(self):

@@ -1,4 +1,4 @@
-_target_: litevit.data.kmnist.KMNISTDataModule
+_target_: litevit.data.KMNISTDataModule
 
 train_transform:
   _target_: torchvision.transforms.Compose

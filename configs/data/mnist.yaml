@@ -1,4 +1,4 @@
-_target_: litevit.data.mnist.MNISTDataModule
+_target_: litevit.data.MNISTDataModule
 
 train_transform:
   _target_: torchvision.transforms.Compose

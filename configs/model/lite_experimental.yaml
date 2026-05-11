@@ -4,7 +4,7 @@ defaults:
   - block@block_cfg: vanilla
   - _self_
 
-_target_: litevit.models.vit.build_vit
+_target_: litevit.models.build_vit
 embed_dim: 128
 num_heads: 4
 depth: 6

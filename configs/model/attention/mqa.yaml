@@ -1,3 +1,3 @@
-_target_: litevit.models.attention.mqa.MultiQueryAttention
+_target_: litevit.models.attention.MultiQueryAttention
 embed_dim: ${model.embed_dim}
 num_heads: ${model.num_heads}

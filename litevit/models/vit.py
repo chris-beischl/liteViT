@@ -4,11 +4,8 @@ import torch
 from torch import nn
 import hydra
 
-from litevit.utils import drop_path
-
 from .patch_embed import BasePatchEmbed
-from .attention.base import BaseAttention
-from .transformer.base import BaseTransformerBlock
+from .block import BaseTransformerBlock
 from ..utils.pos_embed import get_sincos_positional_embeddings
 
 

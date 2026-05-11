@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 
-from ..attention.base import BaseAttention
+from ..attention import BaseAttention
 from .base import BaseTransformerBlock
 
 

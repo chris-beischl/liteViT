@@ -1,7 +1,7 @@
 from torchvision.datasets import CIFAR10
 
-from litevit.data.base import BaseDataModule
-from litevit.data.transform_dataset import TransformDataset
+from .base import BaseDataModule
+from .transform_dataset import TransformDataset
 
 
 class CIFAR10DataModule(BaseDataModule):
