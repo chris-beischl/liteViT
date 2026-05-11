@@ -1,8 +1,15 @@
 _target_: litevit.data.FashionMNISTDataModule
 
+# transformations inspired by CIFAR10 augementations used in
+# He et al. 2015 - Deep Residual Learning for Image Recognition for
+# minimal training transformations
 train_transform:
   _target_: torchvision.transforms.Compose
   transforms:
+    - _target_: torchvision.transforms.RandomCrop
+      size: ${data.img_size}
+      padding: 4
+    - _target_: torchvision.transforms.RandomHorizontalFlip
     - _target_: torchvision.transforms.ToTensor
     - _target_: torchvision.transforms.Normalize
       mean: [0.5]
