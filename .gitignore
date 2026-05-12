@@ -41,5 +41,8 @@ checkpoints/
 /data/
 notebooks/data/
 
+# Databases 
+*.db
+
 # Logs
 logs/

@@ -13,6 +13,12 @@ register_configs()
 
 @hydra.main(version_base=None, config_path="configs", config_name="train")
 def main(cfg):
+    return run_training(cfg)
+
+def run_training(cfg): 
+    cfg = OmegaConf.to_container(cfg, resolve=True)
+    cfg = OmegaConf.create(cfg)    
+    
     L.seed_everything(cfg.seed, workers=True)
 
     model = hydra.utils.instantiate(cfg.model, _recursive_=False)
