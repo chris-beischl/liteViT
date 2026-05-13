@@ -15,7 +15,7 @@ def test_returns_sequential_lr():
     scheduler = partial(CosineAnnealingLR, eta_min=0.0)
 
     warmup_scheduler = build_lr_scheduler_with_warmup(
-        optimizer, warmup_epochs=20, T_max=100, scheduler=scheduler
+        optimizer, warmup_epochs=20, t_max=100, scheduler=scheduler
     )
     assert isinstance(warmup_scheduler, SequentialLR)
 
@@ -28,7 +28,7 @@ def test_warmup_reaches_base_lr(base_lr, warmup_epochs):
     scheduler = partial(CosineAnnealingLR, eta_min=0.0)
 
     warmup_scheduler = build_lr_scheduler_with_warmup(
-        optimizer, warmup_epochs=warmup_epochs, T_max=100, scheduler=scheduler
+        optimizer, warmup_epochs=warmup_epochs, t_max=100, scheduler=scheduler
     )
 
     for _ in range(warmup_epochs):
@@ -46,7 +46,7 @@ def test_lr_strictly_decreases_after_warmup(base_lr, warmup_epochs):
     scheduler = partial(CosineAnnealingLR, eta_min=0.0)
 
     warmup_scheduler = build_lr_scheduler_with_warmup(
-        optimizer, warmup_epochs=warmup_epochs, T_max=100, scheduler=scheduler
+        optimizer, warmup_epochs=warmup_epochs, t_max=100, scheduler=scheduler
     )
 
     for _ in range(warmup_epochs):
