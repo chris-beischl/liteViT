@@ -2,7 +2,6 @@
 __pycache__/
 *.py[cod]
 *.pyd
-.python-version
 
 # Virtual environment
 .venv/
@@ -41,7 +40,7 @@ checkpoints/
 /data/
 notebooks/data/
 
-# Databases 
+# Databases
 *.db
 
 # Logs
