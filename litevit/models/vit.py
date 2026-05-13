@@ -1,12 +1,17 @@
-from typing import Callable
+from typing import Any, Protocol
 
-import torch
-from torch import nn
 import hydra
+import torch
+from omegaconf import DictConfig
+from torch import nn
 
-from .patch_embed import BasePatchEmbed
-from .block import BaseTransformerBlock
 from ..utils.pos_embed import get_sincos_positional_embeddings
+from .block import BaseTransformerBlock
+from .patch_embed import BasePatchEmbed
+
+
+class BlockFactory(Protocol):
+    def __call__(self, drop_path: float) -> BaseTransformerBlock: ...
 
 
 class ViT(nn.Module):
@@ -14,13 +19,13 @@ class ViT(nn.Module):
         self,
         embed_dim: int,
         patch_embed: BasePatchEmbed,
-        block_factory: Callable[[float], BaseTransformerBlock],
+        block_factory: BlockFactory,
         depth: int = 12,
         num_classes: int = 2,
         pos_embed_type: str = "sincos",
         dropout: float = 0.0,
         drop_path_rate: float = 0.0,
-    ):
+    ) -> None:
         super().__init__()
 
         self.patch_embed = patch_embed
@@ -35,7 +40,9 @@ class ViT(nn.Module):
         self.cls_token = nn.Parameter(torch.zeros(1, 1, self.embed_dim))
 
         if pos_embed_type == "sincos":
-            # Register the sincos positional embedding as a buffer since it is fixed and not learnable
+            # Register the sincos positional embedding as a buffer since it is fixed
+            # and not learnable
+            self.pos_embed: torch.Tensor
             self.register_buffer(
                 "pos_embed",
                 get_sincos_positional_embeddings(
@@ -51,7 +58,8 @@ class ViT(nn.Module):
         # create stochastic depth:
         dpr = [x.item() for x in torch.linspace(0, drop_path_rate, depth)]
 
-        # construct transformer blocks using the provided block factory and drop path rates
+        # construct transformer blocks using the provided block factory and drop path
+        # rates
         self.blocks = nn.ModuleList(
             [block_factory(drop_path=dpr[i]) for i in range(depth)]
         )
@@ -88,29 +96,30 @@ class ViT(nn.Module):
 
         # take the CLS token output for classification
         cls_output = x[:, 0]  # (B, embed_dim)
-        logits = self.head(cls_output)  # (B, num_classes)
+        logits: torch.Tensor = self.head(cls_output)  # (B, num_classes)
         return logits
 
 
 def build_vit(
     embed_dim: int,
-    patch_embed_cfg,
-    attention_cfg,
-    block_cfg,
+    patch_embed_cfg: DictConfig,
+    attention_cfg: DictConfig,
+    block_cfg: DictConfig,
     depth: int,
     num_classes: int,
     pos_embed_type: str = "sincos",
     dropout: float = 0.0,
     drop_path_rate: float = 0.0,
-    **kwargs, 
+    **kwargs: dict[Any, Any],
 ) -> ViT:
     patch_embed = hydra.utils.instantiate(patch_embed_cfg)
 
-    def block_factory(drop_path):
+    def block_factory(drop_path: float) -> BaseTransformerBlock:
         attention = hydra.utils.instantiate(attention_cfg)
-        return hydra.utils.instantiate(
+        block: BaseTransformerBlock = hydra.utils.instantiate(
             block_cfg, attention=attention, drop_path=drop_path
         )
+        return block
 
     return ViT(
         embed_dim=embed_dim,

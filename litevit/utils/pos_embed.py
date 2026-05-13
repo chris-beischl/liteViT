@@ -1,7 +1,8 @@
 import torch
 
+
 def get_sincos_positional_embeddings(
-    grid_size: tuple[int, ...], embed_dim: int, temperature: int =10000
+    grid_size: tuple[int, ...], embed_dim: int, temperature: int = 10000
 ) -> torch.Tensor:
     """
     Generate fixed sine-cosine positional embeddings for 2D or 3D grids.
@@ -13,9 +14,9 @@ def get_sincos_positional_embeddings(
     Returns:
         pos_embed: tensor of shape (1, num_tokens, embed_dim)
     """
-    if not len(grid_size) in (2, 3): 
+    if len(grid_size) not in (2, 3):
         raise ValueError("Only 2D or 3D grids are supported")
-    if not embed_dim % len(grid_size) == 0: 
+    if not embed_dim % len(grid_size) == 0:
         raise ValueError("Embedding dimension must be divisible by number of axes")
 
     num_axes = len(grid_size)
@@ -26,10 +27,10 @@ def get_sincos_positional_embeddings(
         [torch.arange(s, dtype=torch.float32) for s in grid_size], indexing="ij"
     )
     # flatten to (num_positions,)
-    grids = [g.flatten() for g in grids]
+    flat_grids = [g.flatten() for g in grids]
 
     embeddings = []
-    for coords in grids:
+    for coords in flat_grids:
         omega = 1 / (
             temperature ** (torch.arange(0, dim_per_axis, 2).float() / dim_per_axis)
         )

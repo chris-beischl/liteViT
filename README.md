@@ -140,6 +140,29 @@ tests/
 
 ---
 
+## Pre-commit Hooks
+
+Install the hooks once after cloning:
+
+```bash
+uv run pre-commit install
+```
+
+Hooks run automatically on every commit:
+
+- **pre-commit-hooks**: trailing whitespace, end-of-file fixing, YAML/TOML validation, merge conflict detection
+- **nbclearout**: strips Jupyter notebook outputs before committing
+- **ruff**: linting (with auto-fix) and formatting
+- **mypy**: strict type checking across `litevit/`, `train.py`, `eval.py`, `sweep.py`
+
+To run manually on all files:
+
+```bash
+uv run pre-commit run --all-files
+```
+
+---
+
 ## Tests
 
 ```bash

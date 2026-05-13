@@ -1,4 +1,4 @@
-defaults: 
+defaults:
   - train_config
   - model: lite_experimental
   - data: mnist
@@ -6,7 +6,7 @@ defaults:
   - optimizer: adam_w
   - scheduler: cosine_warmup
   - metrics: classification
-  - trainer: default 
+  - trainer: default
   - callbacks: no_checkpoint
   - logger: mlflow
   - _self_

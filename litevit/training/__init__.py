@@ -1,1 +1,1 @@
-from .module import ClassificationModule
+from .module import ClassificationModule as ClassificationModule

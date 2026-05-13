@@ -1,17 +1,17 @@
 from abc import ABC, abstractmethod
+from typing import Any
 
 import torch
 import torch.nn as nn
-from torch.utils.data import DataLoader, Dataset, random_split
-
 from lightning import LightningDataModule
+from torch.utils.data import DataLoader, Dataset, Subset, random_split
 
 
 class BaseDataModule(LightningDataModule, ABC):
     def __init__(
         self,
         train_transform: nn.Module | None = None,
-        eval_transform: nn.Module | None  = None,
+        eval_transform: nn.Module | None = None,
         split_perc: tuple[float, float, float] = (0.8, 0.1, 0.1),
         num_workers: int = 0,
         batch_size: int = 32,
@@ -20,8 +20,8 @@ class BaseDataModule(LightningDataModule, ABC):
         prefetch_factor: int = 2,
         data_dir: str = "./data",
         seed: int = 0,
-        **kwargs,
-    ):
+        **kwargs: dict[Any, Any],
+    ) -> None:
         super().__init__()
         self.train_transform = train_transform or nn.Identity()
         self.eval_transform = eval_transform or nn.Identity()
@@ -34,56 +34,70 @@ class BaseDataModule(LightningDataModule, ABC):
         self.data_dir = data_dir
         self.seed = seed
 
-        self._train_dataset = None
-        self._val_dataset = None
-        self._test_dataset = None
-        
+        self._train_dataset: Dataset[tuple[Any, Any]] | None = None
+        self._val_dataset: Dataset[tuple[Any, Any]] | None = None
+        self._test_dataset: Dataset[tuple[Any, Any]] | None = None
+
     @property
     @abstractmethod
-    def num_classes(self) -> int: 
-        ... 
-        
+    def num_classes(self) -> int: ...
+
     @property
     @abstractmethod
-    def num_channels(self) -> int: 
-        ...
-        
+    def num_channels(self) -> int: ...
+
     @property
     @abstractmethod
-    def img_size(self) -> tuple[int, int]: 
-        ... 
+    def img_size(self) -> tuple[int, int]: ...
 
     @abstractmethod
-    def prepare_data(self):
-        pass
+    def prepare_data(self) -> None: ...
 
     @abstractmethod
-    def setup(self, stage=None):
-        pass
-    
-    def _split_dataset(self, dataset: Dataset, split_ratio: tuple[float, ...]) -> tuple[Dataset, ...]:
+    def setup(self, stage: str | None = None) -> None: ...
+
+    def _split_dataset(
+        self, dataset: Dataset[tuple[Any, Any]], split_ratio: tuple[float, ...]
+    ) -> list[Subset[tuple[Any, Any]]]:
         return random_split(
             dataset,
             split_ratio,
             generator=torch.Generator().manual_seed(self.seed),
         )
-    
-    def _make_dataloader(self, dataset, shuffle: bool) -> DataLoader: 
+
+    def _make_dataloader(
+        self, dataset: Dataset[tuple[Any, Any]], shuffle: bool
+    ) -> DataLoader[Any]:
         return DataLoader(
             dataset,
             batch_size=self.batch_size,
             num_workers=self.num_workers,
             pin_memory=self.pin_memory,
             persistent_workers=self.persistent_workers,
-            prefetch_factor=self.prefetch_factor if self.num_workers > 0 else None, 
+            prefetch_factor=self.prefetch_factor if self.num_workers > 0 else None,
             shuffle=shuffle,
         )
 
-    def train_dataloader(self):
+    def train_dataloader(self) -> DataLoader[Any]:
+        if self._train_dataset is None:
+            raise RuntimeError(
+                "train_dataloader() called but _train_dataset is None. "
+                "Ensure setup() was called with the correct stage or stage=None."
+            )
         return self._make_dataloader(self._train_dataset, shuffle=True)
 
-    def val_dataloader(self):
+    def val_dataloader(self) -> DataLoader[Any]:
+        if self._val_dataset is None:
+            raise RuntimeError(
+                "val_dataloader() called but _val_dataset is None. "
+                "Ensure setup() was called with the correct stage or stage=None."
+            )
         return self._make_dataloader(self._val_dataset, shuffle=False)
 
-    def test_dataloader(self):
+    def test_dataloader(self) -> DataLoader[Any]:
+        if self._test_dataset is None:
+            raise RuntimeError(
+                "test_dataloader() called but _test_dataset is None. "
+                "Ensure setup() was called with the correct stage or stage=None."
+            )
         return self._make_dataloader(self._test_dataset, shuffle=False)

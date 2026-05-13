@@ -3,8 +3,9 @@ from abc import ABC, abstractmethod
 import torch
 from torch import nn
 
-from ..attention import BaseAttention
 from ...utils import DropPath, resolve
+from ..attention import BaseAttention
+
 
 class BaseTransformerBlock(nn.Module, ABC):
     def __init__(
@@ -22,12 +23,14 @@ class BaseTransformerBlock(nn.Module, ABC):
         self.mlp_ratio = mlp_ratio
         self.dropout = dropout
         self.drop_path = DropPath(drop_path)
-        
+
         self.norm = resolve(norm) if isinstance(norm, str) else norm
-            
+
         self.activation = activation
 
         self.embed_dim = attention.embed_dim
 
     @abstractmethod
-    def forward(self, x: torch.Tensor, mask: torch.Tensor | None = None) -> torch.Tensor: ...
+    def forward(
+        self, x: torch.Tensor, mask: torch.Tensor | None = None
+    ) -> torch.Tensor: ...

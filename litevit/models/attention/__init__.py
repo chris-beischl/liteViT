@@ -1,4 +1,4 @@
-from .base import BaseAttention
-from .vanilla import VanillaAttention
-from .mqa import MultiQueryAttention
-from .gqa import GroupedQueryAttention
+from .base import BaseAttention as BaseAttention
+from .gqa import GroupedQueryAttention as GroupedQueryAttention
+from .mqa import MultiQueryAttention as MultiQueryAttention
+from .vanilla import VanillaAttention as VanillaAttention

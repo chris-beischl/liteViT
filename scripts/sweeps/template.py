@@ -1,6 +1,8 @@
+from collections.abc import Callable
+from datetime import datetime
+
 import hydra
 import optuna
-from datetime import datetime
 
 from train import run_training
 
@@ -8,12 +10,15 @@ from train import run_training
 STUDY_NAME = "my-sweep"
 
 
-def make_objective(config_name: str, fixed_overrides: list[str] | None = None):
+def make_objective(
+    config_name: str, fixed_overrides: list[str] | None = None
+) -> Callable:
     """Objective factory for Optuna.
 
     Args:
         config_name: Hydra config name (e.g. "train")
-        fixed_overrides: Hydra overrides applied to every trial (e.g. ["data=fashion_mnist"])
+        fixed_overrides: Hydra overrides applied to every trial
+        (e.g. ["data=fashion_mnist"])
 
     Returns:
         Optuna objective function that returns the metric to optimize.

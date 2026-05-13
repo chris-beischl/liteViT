@@ -28,7 +28,9 @@ class VanillaTransformerBlock(BaseTransformerBlock):
             nn.Dropout(dropout),
         )
 
-    def forward(self, x: torch.Tensor, mask: torch.Tensor | None = None) -> torch.Tensor:
+    def forward(
+        self, x: torch.Tensor, mask: torch.Tensor | None = None
+    ) -> torch.Tensor:
         x = x + self.drop_path(self.attention(self.norm1(x), mask=mask)[0])
         x = x + self.drop_path(self.mlp(self.norm2(x)))
         return x

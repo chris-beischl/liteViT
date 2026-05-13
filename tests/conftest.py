@@ -1,11 +1,10 @@
 import pytest
-
 import torch
 
-from litevit.models.vit import ViT
-from litevit.models.patch_embed import ConvPatchEmbed
-from litevit.models.block import VanillaTransformerBlock
 from litevit.models.attention.vanilla import VanillaAttention
+from litevit.models.block import VanillaTransformerBlock
+from litevit.models.patch_embed import ConvPatchEmbed
+from litevit.models.vit import ViT
 
 
 @pytest.fixture

@@ -16,5 +16,5 @@ callbacks:
     filename: last-{epoch}
 
 
-trainer: 
+trainer:
   enable_checkpointing: True

@@ -1,8 +1,9 @@
-import hydra
+from typing import Any
 
+import hydra
 import lightning as L
-from torchmetrics import MetricCollection
 from omegaconf import OmegaConf
+from torchmetrics import MetricCollection
 
 from litevit.conf import register_configs
 from litevit.training import ClassificationModule
@@ -12,13 +13,14 @@ register_configs()
 
 
 @hydra.main(version_base=None, config_path="configs", config_name="train")
-def main(cfg):
-    return run_training(cfg)
+def main(cfg: dict[str, Any]) -> None:
+    run_training(cfg)
 
-def run_training(cfg): 
+
+def run_training(cfg: Any) -> float:
     cfg = OmegaConf.to_container(cfg, resolve=True)
-    cfg = OmegaConf.create(cfg)    
-    
+    cfg = OmegaConf.create(cfg)
+
     L.seed_everything(cfg.seed, workers=True)
 
     model = hydra.utils.instantiate(cfg.model, _recursive_=False)
@@ -26,10 +28,12 @@ def run_training(cfg):
     optimizer_cfg = cfg.optimizer
     scheduler_cfg = cfg.scheduler
     metrics = (
-        MetricCollection({
-            name: hydra.utils.instantiate(metric_cfg)
-            for name, metric_cfg in cfg.metrics.items()
-        })
+        MetricCollection(
+            {
+                name: hydra.utils.instantiate(metric_cfg)
+                for name, metric_cfg in cfg.metrics.items()
+            }
+        )
         if cfg.metrics is not None
         else None
     )
@@ -50,17 +54,18 @@ def run_training(cfg):
     # add Metadata logger for cfg and run_id
     checkpoint_metadata_callback = CheckpointMetadataCallback(cfg, run_id)
     callbacks.append(checkpoint_metadata_callback)
-    
-    if hasattr(logger, 'log_hyperparams'): 
+
+    if logger is not None and hasattr(logger, "log_hyperparams"):
         logger.log_hyperparams(OmegaConf.to_container(cfg, resolve=True))
-    
+
     trainer: L.Trainer = hydra.utils.instantiate(
         cfg.trainer, callbacks=callbacks, logger=logger
     )
     trainer.fit(module, datamodule=data)
-    
+
     # return validation accuracy for optuna to use for hparam selection
     return trainer.callback_metrics["val_accuracy"].item()
+
 
 if __name__ == "__main__":
     main()

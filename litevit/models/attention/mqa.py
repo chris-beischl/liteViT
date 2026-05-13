@@ -6,16 +6,17 @@ from .base import BaseAttention
 
 
 class MultiQueryAttention(BaseAttention):
-    """paper: 
+    """paper:
         'Fast Transformer Decoding: One Write-Head is All You Need'
         Noam Shazeer, 2019
-    
+
     Args:
         embed_dim: Total embedding dimension.
         num_heads: Number of attention heads. Must divide embed_dim evenly.
         dropout: Dropout probability applied to attention weights and output projection.
     """
-    def __init__(self, embed_dim: int, num_heads: int, dropout: float = 0.0):
+
+    def __init__(self, embed_dim: int, num_heads: int, dropout: float = 0.0) -> None:
         super().__init__(embed_dim, num_heads, dropout)
 
         self.head_dim = embed_dim // num_heads
@@ -26,12 +27,12 @@ class MultiQueryAttention(BaseAttention):
             )
 
         # scale factor for attention scores of each head
-        self.scale = 1 / (self.head_dim ** 0.5)
+        self.scale = 1 / (self.head_dim**0.5)
 
         self.q_proj = nn.Linear(embed_dim, embed_dim)
         self.kv_proj = nn.Linear(embed_dim, 2 * self.head_dim)
         self.attn_dropout = nn.Dropout(dropout)
-        
+
         self.out_proj = nn.Linear(embed_dim, embed_dim)
         self.proj_dropout = nn.Dropout(dropout)
 
@@ -50,25 +51,26 @@ class MultiQueryAttention(BaseAttention):
         k = rearrange(k, "b s d -> b 1 s d")
         v = rearrange(v, "b s d -> b 1 s d")
 
-        # Compute attention scores using einsum for efficient batch matrix multiplication
+        # Compute attention scores using einsum for efficient batch matrix
+        # multiplication
         # qk shape: (batch_size, num_heads, seq_len_q, seq_len_k)
         qk = (q @ k.transpose(-2, -1)) * self.scale
-        
+
         # Apply mask if provided
         if mask is not None:
             qk = qk + mask
-        
+
         attn = torch.softmax(qk, dim=-1)
         attn = self.attn_dropout(attn)
-        
+
         # Compute attention output using einsum
         # attn_v shape: (batch_size, num_heads, seq_len_q, head_dim)
         attn_v = attn @ v
-        
+
         # Reshape back to (batch_size, seq_len_q, embed_dim)
         attn_v = rearrange(attn_v, "b h s d -> b s (h d)")
-        
+
         out = self.proj_dropout(self.out_proj(attn_v))
-        
+
         attn_weights = attn if return_attention else None
         return out, attn_weights
