@@ -71,6 +71,32 @@ Sweep results persist in `optuna_studies.db` and resume automatically if interru
 
 ---
 
+## Model Comparison
+
+Run a systematic comparison across models, datasets, and seeds:
+
+```bash
+uv run python scripts/comparison.py \
+  --models lite_comparison timm_comparison \   # model config names (configs/model/<name>.yaml)
+  --datasets fashion_mnist cifar10 \           # data config names
+  --n_seeds 5                                  # seeds 0..n-1, runs sequentially
+```
+
+Runs the full cartesian product of models × datasets × seeds. Each run is logged to MLflow under the `comparison` experiment with run names like `lite_comparison_fashion_mnist_seed0`.
+
+Optional overrides (all have sensible defaults):
+
+```bash
+  --optimizer comparison \   # configs/optimizer/<name>.yaml (default: comparison)
+  --scheduler cosine_warmup \ # configs/scheduler/<name>.yaml (default: cosine_warmup)
+  --callbacks default \       # configs/callbacks/<name>.yaml (default: default)
+  --logger mlflow             # configs/logger/<name>.yaml (default: mlflow)
+```
+
+Failed runs print a warning and are skipped — rerun them individually with `train.py`.
+
+---
+
 ## Inspecting Results
 
 **MLflow UI** — training metrics, hyperparameters, run comparison:
