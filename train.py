@@ -2,6 +2,8 @@ from typing import Any
 
 import hydra
 import lightning as L
+from hydra.core.hydra_config import HydraConfig
+from lightning.pytorch.callbacks import ModelCheckpoint
 from omegaconf import OmegaConf
 from torchmetrics import MetricCollection
 
@@ -18,6 +20,7 @@ def main(cfg: dict[str, Any]) -> None:
 
 
 def run_training(cfg: Any) -> float:
+    # resolve then re-wrap so interpolations are gone before passing to Lightning
     cfg = OmegaConf.to_container(cfg, resolve=True)
     cfg = OmegaConf.create(cfg)
 
@@ -47,16 +50,46 @@ def run_training(cfg: Any) -> float:
     )
 
     data = hydra.utils.instantiate(cfg.data)
-    callbacks = [hydra.utils.instantiate(cb) for cb in cfg.callbacks]
     logger = hydra.utils.instantiate(cfg.logger) if cfg.logger is not None else None
+
+    # HydraConfig is unavailable when called via hydra.compose (sweeps)
+    try:
+        model_cfg = HydraConfig.get().runtime.choices["model"]
+        data_cfg = HydraConfig.get().runtime.choices["data"]
+    except ValueError:
+        model_cfg = "unknown"
+        data_cfg = "unknown"
+
+    experiment_name = logger._experiment_name if logger is not None else "default"
     run_id = logger.run_id if logger is not None else None
 
-    # add Metadata logger for cfg and run_id
+    callbacks = [hydra.utils.instantiate(cb) for cb in cfg.callbacks]
     checkpoint_metadata_callback = CheckpointMetadataCallback(cfg, run_id)
     callbacks.append(checkpoint_metadata_callback)
 
     if logger is not None and hasattr(logger, "log_hyperparams"):
+        checkpoint_path = (
+            f"checkpoints/{experiment_name}/{model_cfg}/{data_cfg}/{run_id}"
+        )
+
+        # organise checkpoints under the MLflow experiment/model/data/run tree
+        for cb in callbacks:
+            if isinstance(cb, ModelCheckpoint):
+                cb.dirpath = checkpoint_path
+
         logger.log_hyperparams(OmegaConf.to_container(cfg, resolve=True))
+        # log config group names separately so MLflow runs are filterable by model/data
+        logger.log_hyperparams(
+            {
+                "model_cfg": model_cfg,
+                "data_cfg": data_cfg,
+                "checkpoint_path": (
+                    checkpoint_path
+                    if any([isinstance(cb, ModelCheckpoint) for cb in callbacks])
+                    else None
+                ),
+            }
+        )
 
     trainer: L.Trainer = hydra.utils.instantiate(
         cfg.trainer, callbacks=callbacks, logger=logger
