@@ -16,6 +16,9 @@ build/
 .coverage
 htmlcov/
 
+# Ruff linting / formatting
+.ruff_cache/
+
 # Type checking
 .mypy_cache/
 
