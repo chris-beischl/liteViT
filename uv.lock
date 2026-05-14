@@ -2195,15 +2195,15 @@ dependencies = [
 ]
 
 [package.dev-dependencies]
+comparison = [
+    { name = "timm" },
+]
 dev = [
     { name = "mypy" },
     { name = "pre-commit" },
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "ruff" },
-]
-eval = [
-    { name = "timm" },
 ]
 
 [package.metadata]
@@ -2223,6 +2223,7 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
+comparison = [{ name = "timm" }]
 dev = [
     { name = "mypy", specifier = ">=2.0.0" },
     { name = "pre-commit", specifier = ">=4.6.0" },
@@ -2230,7 +2231,6 @@ dev = [
     { name = "pytest-cov", specifier = ">=7.1.0" },
     { name = "ruff", specifier = ">=0.15.12" },
 ]
-eval = [{ name = "timm" }]
 
 [[package]]
 name = "mako"

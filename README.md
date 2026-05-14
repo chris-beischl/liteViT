@@ -6,12 +6,34 @@ A from-scratch Vision Transformer implementation — no timm, no pretrained weig
 
 ---
 
+## Table of Contents
+
+- [Setup](#setup)
+- [Training](#training)
+- [Evaluation](#evaluation)
+- [Hyperparameter Sweeps](#hyperparameter-sweeps)
+- [Model Comparison](#model-comparison)
+- [Inspecting Results](#inspecting-results)
+- [Project Structure](#project-structure)
+- [Attention Mechanisms](#attention-mechanisms)
+- [Datasets](#datasets)
+- [Pre-commit Hooks](#pre-commit-hooks)
+- [Tests](#tests)
+
+---
+
 ## Setup
 
 Requires [uv](https://docs.astral.sh/uv/). uv manages the Python version and all dependencies automatically.
 
 ```bash
 uv sync
+```
+
+To run model comparisons involving timm, install the comparison dependencies:
+
+```bash
+uv sync --group comparison
 ```
 
 ---
@@ -22,7 +44,7 @@ uv sync
 uv run python train.py                                              # default config
 uv run python train.py data=fashion_mnist                           # swap dataset
 uv run python train.py data=fashion_mnist model=lite_experimental   # swap model
-uv run python train.py model.depth=6 model.drop_path_rate=0.1      # override params
+uv run python train.py model.depth=6 model.drop_path_rate=0.1       # override params
 uv run python train.py callbacks=default                            # enable checkpointing
 ```
 
@@ -73,7 +95,7 @@ Sweep results persist in `optuna_studies.db` and resume automatically if interru
 
 ## Model Comparison
 
-Run a systematic comparison across models, datasets, and seeds:
+Requires comparison dependencies (`uv sync --group comparison`). Run a systematic comparison across models, datasets, and seeds:
 
 ```bash
 uv run python scripts/comparison.py \
