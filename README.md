@@ -4,6 +4,8 @@ A from-scratch Vision Transformer implementation — no timm, no pretrained weig
 
 **Stack:** PyTorch · PyTorch Lightning · Hydra · MLflow · Optuna · torchmetrics
 
+[![pytest](https://github.com/chris-beischl/liteViT/actions/workflows/pytest.yml/badge.svg)](https://github.com/chris-beischl/liteViT/actions/workflows/pytest.yml) [![static-analysis](https://github.com/chris-beischl/liteViT/actions/workflows/static_analysis.yml/badge.svg)](https://github.com/chris-beischl/liteViT/actions/workflows/static_analysis.yml)
+
 ---
 
 ## Table of Contents
