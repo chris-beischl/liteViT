@@ -172,24 +172,41 @@ uv run optuna trials --storage sqlite:///optuna_studies.db --study-name FashionM
 ## Project Structure
 
 ```
-train.py                    # training entry point
-eval.py                     # checkpoint evaluation
-sweep.py                    # Optuna sweep runner
-configs/
-  train.yaml                # root Hydra config
-  model/                    # model configs
-  data/                     # dataset configs
-  scheduler/                # lr scheduler configs
-  callbacks/                # callback configs
-  experiment/               # experiment-level overrides
+train.py                        # training entry point
+eval.py                         # checkpoint evaluation
+sweep.py                        # Optuna sweep runner
 scripts/
-  sweeps/                   # sweep objective definitions
-    template.py             # starting point for new sweeps
+  comparison.py                 # multi-model/dataset/seed comparison runner
+  collect_results.py            # eval all checkpoints, export CSV + summary
+  sweeps/                       # Optuna sweep objective definitions
+    template.py                 # starting point for new sweeps
+    fashion_mnist_init.py
+    cifar10_init.py
+configs/
+  train.yaml                    # root Hydra config
+  model/                        # model configs (lite_comparison, timm_comparison, ...)
+    attention/                  # attention sub-configs (vanilla, mqa, gqa)
+    block/                      # block sub-configs (vanilla, rms_norm)
+    patch_embed/                # patch embed sub-configs (conv)
+  data/                         # dataset configs (mnist, fashion_mnist, kmnist, cifar10)
+  optimizer/                    # optimizer configs (adam_w, comparison)
+  scheduler/                    # lr scheduler configs (cosine, cosine_warmup)
+  callbacks/                    # callback configs (default, no_checkpoint)
+  trainer/                      # trainer config
+  logger/                       # MLflow logger config
 litevit/
   models/
-  data/
+    vit.py                      # ViT nn.Module + build_vit factory
+    patch_embed.py              # BasePatchEmbed ABC + ConvPatchEmbed
+    timm_vit.py                 # build_timm_vit factory (requires comparison group)
+    attention/                  # BaseAttention + VanillaAttention, MQA, GQA
+    block/                      # BaseTransformerBlock + VanillaTransformerBlock
+  data/                         # BaseDataModule + MNIST, FashionMNIST, KMNIST, CIFAR10
   training/
-  utils/
+    module.py                   # ClassificationModule (LightningModule)
+    callbacks.py                # CheckpointMetadataCallback
+    utils.py                    # build_lr_scheduler_with_warmup
+  utils/                        # drop_path, pos_embed, resolve
 tests/
 ```
 
