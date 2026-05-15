@@ -11,6 +11,8 @@ if __name__ == "__main__":
     parser.add_argument("--optimizer", "-o", type=str, default="comparison")
     parser.add_argument("--scheduler", type=str, default="cosine_warmup")
     parser.add_argument("--callbacks", "-c", type=str, default="default")
+    parser.add_argument("--experiment_name", "-e", type=str, default="comparison")
+    parser.add_argument("--hydra_args", type=str, nargs="+")
 
     args = parser.parse_args()
 
@@ -33,9 +35,13 @@ if __name__ == "__main__":
             f"optimizer={args.optimizer}",
             f"scheduler={args.scheduler}",
             f"callbacks={args.callbacks}",
-            "logger.experiment_name=comparison",
+            f"logger.experiment_name={args.experiment_name}",
             f"logger.run_name={run_name}",
         ]
+
+        if args.hydra_args is not None:
+            cmd += args.hydra_args
+
         result = subprocess.run(cmd)
         if result.returncode != 0:
             print(

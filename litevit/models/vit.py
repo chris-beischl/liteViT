@@ -15,6 +15,15 @@ class BlockFactory(Protocol):
 
 
 class ViT(nn.Module):
+    """Vision Transformer with optional register tokens.
+
+    Register tokens are additional learnable tokens appended to the sequence
+    after the CLS token. Motivated by Darcet et al., "Vision Transformers Need
+    Registers" (2023) — registers give the model dedicated slots for global
+    information, reducing attention artifacts in patch tokens and improving
+    representation quality. Set num_registers=0 (default) to disable.
+    """
+
     def __init__(
         self,
         embed_dim: int,
@@ -22,6 +31,7 @@ class ViT(nn.Module):
         block_factory: BlockFactory,
         depth: int = 12,
         num_classes: int = 2,
+        num_registers: int = 0,
         pos_embed_type: str = "sincos",
         dropout: float = 0.0,
         drop_path_rate: float = 0.0,
@@ -32,12 +42,18 @@ class ViT(nn.Module):
         self.depth = depth
         self.embed_dim = embed_dim
         self.num_classes = num_classes
+        self.num_registers = num_registers
         self.pos_embed_type = pos_embed_type
 
         self.pos_drop = nn.Dropout(p=dropout)
 
         # Store class token as a parameter, since it is learnable
         self.cls_token = nn.Parameter(torch.zeros(1, 1, self.embed_dim))
+
+        if self.num_registers > 0:
+            self.register_tokens = nn.Parameter(
+                torch.zeros(1, self.num_registers, self.embed_dim)
+            )
 
         if pos_embed_type == "sincos":
             # Register the sincos positional embedding as a buffer since it is fixed
@@ -72,6 +88,21 @@ class ViT(nn.Module):
             nn.Linear(self.embed_dim, num_classes) if num_classes > 0 else nn.Identity()
         )
 
+        # initialize wieghts
+        self.apply(self._init_weights)
+        nn.init.trunc_normal_(self.cls_token, std=0.02)
+        if self.num_registers > 0:
+            nn.init.trunc_normal_(self.register_tokens, std=0.02)
+
+    def _init_weights(self, m: nn.Module) -> None:
+        if isinstance(m, nn.Linear):
+            nn.init.trunc_normal_(m.weight, std=0.02)
+            if m.bias is not None:
+                nn.init.zeros_(m.bias)
+        elif isinstance(m, nn.LayerNorm):
+            nn.init.ones_(m.weight)
+            nn.init.zeros_(m.bias)
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         B = x.shape[0]
         x = self.patch_embed(x)  # (B, num_patches, embed_dim)
@@ -83,6 +114,10 @@ class ViT(nn.Module):
         # add CLS token to the beginning of the sequence
         cls_tokens = self.cls_token.expand(B, -1, -1)  # (B, 1, embed_dim)
         x = torch.cat((cls_tokens, x), dim=1)  # (B, num_patches + 1, embed_dim)
+
+        if self.num_registers > 0:
+            register_tokens = self.register_tokens.expand(B, -1, -1)
+            x = torch.cat((x, register_tokens), dim=1)
 
         # apply dropout to the input of the transformer blocks
         x = self.pos_drop(x)
@@ -107,6 +142,7 @@ def build_vit(
     block_cfg: DictConfig,
     depth: int,
     num_classes: int,
+    num_registers: int = 0,
     pos_embed_type: str = "sincos",
     dropout: float = 0.0,
     drop_path_rate: float = 0.0,
@@ -127,6 +163,7 @@ def build_vit(
         block_factory=block_factory,
         depth=depth,
         num_classes=num_classes,
+        num_registers=num_registers,
         pos_embed_type=pos_embed_type,
         dropout=dropout,
         drop_path_rate=drop_path_rate,
