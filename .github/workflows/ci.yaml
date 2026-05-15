@@ -6,12 +6,15 @@ on:                               # when to trigger
   pull_request:
     branches: [main]
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   static-analysis:                           # job name
     runs-on: ubuntu-latest        # which machine to use
     steps:
-      - uses: actions/checkout@v4 # clone your repo
-      - uses: astral-sh/setup-uv@v4  # install uv
+      - uses: actions/checkout@v6 # clone your repo
+      - uses: astral-sh/setup-uv@v8  # install uv
         with:
           python-version: "3.11"
       - run: uv sync --extra-index-url https://download.pytorch.org/whl/cpu
