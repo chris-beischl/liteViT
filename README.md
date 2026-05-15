@@ -15,6 +15,7 @@ A from-scratch Vision Transformer implementation — no timm, no pretrained weig
 - [Evaluation](#evaluation)
 - [Hyperparameter Sweeps](#hyperparameter-sweeps)
 - [Model Comparison](#model-comparison)
+  - [Results](#results)
 - [Inspecting Results](#inspecting-results)
 - [Project Structure](#project-structure)
 - [Attention Mechanisms](#attention-mechanisms)
@@ -118,6 +119,31 @@ Optional overrides (all have sensible defaults):
 ```
 
 Failed runs print a warning and are skipped — rerun them individually with `train.py`.
+
+### Results
+
+All results are mean ± std over 5 seeds. Hyperparameters were selected via Optuna sweep on liteViT and held fixed for timm to ensure a fair comparison. The only architectural difference is positional embeddings: liteViT uses fixed sincos, timm uses learnable.
+
+**FashionMNIST** — depth=6, embed\_dim=128, num\_heads=8, drop\_path\_rate=0.1, lr=7e-4, wd=3e-3
+
+| Model | Dataset | Test Accuracy | Test F1 |
+|---|---|---|---|
+| liteViT | FashionMNIST | **93.56 ± 0.14%** | **93.55 ± 0.14%** |
+| timm ViT | FashionMNIST | 93.15 ± 0.07% | 93.13 ± 0.07% |
+
+**To reproduce:**
+
+```bash
+uv sync --group comparison
+uv run python scripts/comparison.py \
+  --models lite_comparison timm_comparison \
+  --datasets fashion_mnist \
+  --n_seeds 5
+uv run python scripts/collect_results.py \
+  -e comparison \
+  -m lite_comparison timm_comparison \
+  -d fashion_mnist
+```
 
 ---
 
