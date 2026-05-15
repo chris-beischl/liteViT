@@ -13,7 +13,10 @@ def fetch_runs(
     datasets: list[str] | None,
     seeds: list[int] | None,
 ) -> pd.DataFrame:
-    runs = mlflow.search_runs(experiment_names=experiment_names)
+    # explicit casting to DataFrame for mypy
+    runs: pd.DataFrame = pd.DataFrame(
+        mlflow.search_runs(experiment_names=experiment_names)
+    )
     if models is not None:
         runs = runs[runs["params.model_cfg"].isin(models)]
     if datasets is not None:

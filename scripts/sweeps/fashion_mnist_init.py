@@ -1,3 +1,4 @@
+from collections.abc import Callable
 from datetime import datetime
 
 import hydra
@@ -8,7 +9,9 @@ from train import run_training
 STUDY_NAME = "FashionMNIST-init"
 
 
-def make_objective(config_name, fixed_overrides: list[str] | None = None):
+def make_objective(
+    config_name: str, fixed_overrides: list[str] | None = None
+) -> Callable[[optuna.Trial], float]:
     if fixed_overrides is None:
         fixed_overrides = []
     print(fixed_overrides)

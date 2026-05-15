@@ -12,7 +12,7 @@ STUDY_NAME = "my-sweep"
 
 def make_objective(
     config_name: str, fixed_overrides: list[str] | None = None
-) -> Callable:
+) -> Callable[[optuna.Trial], float]:
     """Objective factory for Optuna.
 
     Args:
