@@ -5,6 +5,7 @@ import lightning as L
 from hydra.core.hydra_config import HydraConfig
 from lightning.pytorch.callbacks import ModelCheckpoint
 from omegaconf import OmegaConf
+from torch import set_float32_matmul_precision as torch_set_float32_matmul_precision
 from torchmetrics import MetricCollection
 
 from litevit.conf import register_configs
@@ -25,6 +26,7 @@ def run_training(cfg: Any) -> float:
     cfg = OmegaConf.create(cfg)
 
     L.seed_everything(cfg.seed, workers=True)
+    torch_set_float32_matmul_precision("medium")
 
     model = hydra.utils.instantiate(cfg.model, _recursive_=False)
     loss = hydra.utils.instantiate(cfg.loss)
