@@ -1,6 +1,6 @@
 defaults:
   - patch_embed@patch_embed_cfg: conv
-  - attention@attention_cfg: vanilla
+  - attention@attention_cfg: gqa
   - block@block_cfg: vanilla
   - _self_
 
