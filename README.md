@@ -122,14 +122,26 @@ Failed runs print a warning and are skipped — rerun them individually with `tr
 
 ### Results
 
-All results are mean ± std over 5 seeds. Hyperparameters were selected via Optuna sweep on liteViT and held fixed for timm to ensure a fair comparison. The only architectural difference is positional embeddings: liteViT uses fixed sincos, timm uses learnable.
+All results are mean ± std over 5 seeds. Bold denotes statistically significant best result (independent t-test, p < 0.05). Hyperparameters were selected via Optuna sweep on liteViT and held fixed across models for a fair comparison.
+
+**Model notation:**
+- **liteViT** — standard MHA with fixed sincos positional embeddings
+- **timm ViT** — timm's ViT implementation with learnable positional embeddings
+- **liteViT/GQA2** — liteViT with Grouped Query Attention using 2 KV-head groups (shared K/V across groups of query heads, reducing KV projection cost)
 
 **FashionMNIST** — depth=6, embed\_dim=128, num\_heads=8, drop\_path\_rate=0.1, lr=7e-4, wd=3e-3
+
+**CIFAR10** — depth=6, embed\_dim=192, num\_heads=12, drop\_path\_rate=0.15, lr=5e-4, wd=3e-4, 200 epochs, 40 epoch warmup
 
 | Model | Dataset | Test Accuracy | Test F1 |
 |---|---|---|---|
 | liteViT | FashionMNIST | **93.56 ± 0.14%** | **93.55 ± 0.14%** |
 | timm ViT | FashionMNIST | 93.15 ± 0.07% | 93.13 ± 0.07% |
+| liteViT | CIFAR10 | 82.26 ± 0.26% | 82.23 ± 0.25% |
+| timm ViT | CIFAR10 | **82.91 ± 0.48%** | **82.87 ± 0.49%** |
+| liteViT/GQA2 | CIFAR10 | 81.30 ± 1.21% | 81.26 ± 1.20% |
+
+On FashionMNIST, liteViT outperforms timm despite using fixed sincos positional embeddings. On CIFAR10, timm achieves significantly higher accuracy (p=0.03) — the gap may be attributable to learnable positional embeddings, subtle implementation differences, or both. GQA with 2 KV groups trades a small accuracy drop for reduced KV projection cost.
 
 **To reproduce:**
 
